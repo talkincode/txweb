@@ -29,6 +29,8 @@ is_time_hm = btforms.regexp('^([01][0-9]|2[0-3]):[0-5][0-9]$', u"时间格式: h
 input_style = {"class": "form-control"}
 button_style = {"class": "btn btn-primary"}
 button_style_block = {"class": "btn btn-block"}
+button_block_style = {"class": "btn btn-success btn-block btn-lg" }
+large_style={"class":" btn btn-lg"}
 
 
 

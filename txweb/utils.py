@@ -336,6 +336,58 @@ def get_cron_interval(cron_time):
         cron_interval = int(_interval.total_seconds())
     return abs(cron_interval)
 
+
+
+
+def resize_img(img_path, out_path, new_width):
+    try:import Image
+    except:from PIL import Image 
+    #读取图像
+    im = Image.open(img_path)
+    #获得图像的宽度和高度
+    width, height = im.size
+    #计算高宽比
+    ratio = 1.0 * height / width
+    #计算新的高度
+    new_height = int(new_width * ratio)
+    new_size = (new_width, new_height)
+    #插值缩放图像，
+    out = im.resize(new_size, Image.ANTIALIAS)
+    #保存图像
+    out.save(out_path)
+
+
+def thumb_img(srcfile, destfile, w, h):
+    try:import Image
+    except:from PIL import Image    
+    def get_region(im):
+        width, height = im.size
+        if width == height:
+            region = im
+        else:
+            if width > height:
+                delta = (width - height) / 2
+                box = (delta, 0, delta + height, height)
+            else:
+                delta = (height - width) / 2
+                box = (0, delta, width, delta + width)
+            region = im.crop(box)
+        return region
+
+    img = get_region(Image.open(srcfile))
+    img.thumbnail((w, h), resample=1)
+    img.save(destfile)    
+
+
+def format_xml(source):
+    import lxml
+    assert isinstance(source,unicode)
+    source = source.replace(r'<?xml version="1.0" encoding="UTF-8"?>', "")
+    root = lxml.etree.XML(source)
+    return lxml.etree.tostring(root, pretty_print=True)
+
+
+
 if __name__ == '__main__':
     aes = AESCipher("LpWE9AtfDPQ3ufXBS6gJ37WW8TnSF920")
     # aa = aes.encrypt(u"中文".encode('utf-8'))
