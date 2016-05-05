@@ -7,8 +7,7 @@ RUN yum update -y
 RUN yum install -y epel-release
 RUN yum install -y libffi-devel openssl openssl-devel \
         git gcc crontabs python-devel python-setuptools \
-        czmq czmq-devel supervisor redis \
-        mysql-devel MySQL-python && \
+        supervisor mysql-devel MySQL-python && \
         test -f /usr/local/bin/supervisord || ln -s `which supervisord` /usr/local/bin/supervisord
 RUN yum clean all
 
@@ -21,19 +20,11 @@ RUN pip install Twisted
 RUN pip install tablib
 RUN pip install cyclone
 RUN pip install six
-RUN pip install autobahn
 RUN pip install pycrypto
 RUN pip install pyOpenSSL>=0.14
 RUN pip install service_identity
 RUN pip install SQLAlchemy
-RUN pip install pyzmq
-RUN pip install txzmq
 RUN pip install redis
-RUN pip install msgpack-python
-RUN pip install python-memcached
-RUN pip install psutil
-RUN pip install IPy
-RUN pip install evernote
 RUN pip install -U --no-deps https://github.com/talkincode/txweb/archive/master.zip
 
 
