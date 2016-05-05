@@ -3,6 +3,7 @@
 import decimal
 import datetime
 from Crypto.Cipher import AES
+from Crypto.PublicKey import RSA
 from Crypto import Random
 import hashlib
 import binascii
@@ -31,6 +32,21 @@ def CurrentID():
     global _CurrentID
     _CurrentID = (_CurrentID + 1) % 1024
     return str(_CurrentID)
+
+
+class RSACipher:
+
+    def encrypt(self, pubkey, raw):
+        pub_key = RSA.importKey(pubkey)
+        raw = safestr(raw)
+        xarr = pub_key.encrypt(text,'')
+        return base64.b64encode(xarr[0])
+
+    def decrypt(self, prikey, enc):   
+        benc = base64.b64decode(enc)
+        pri_key = RSA.importKey(prikey)
+        decrypted_text = pri_key.decrypt(benc)
+        return safeunicode(decrypted_text)
 
 class AESCipher:
     
@@ -74,7 +90,9 @@ class AESCipher:
 
 aescipher = AESCipher()
 encrypt = aescipher.encrypt
-decrypt = aescipher.decrypt 
+decrypt = aescipher.decrypt
+
+
 
 def update_tz(tz_val,default_val="CST-8"):
     try:

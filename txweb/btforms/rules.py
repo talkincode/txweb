@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #coding=utf-8
 
-from toughlib import btforms
+from txweb import btforms
 
 not_null = btforms.notnull
 is_not_empty = btforms.regexp('.+', u"不允许为空")

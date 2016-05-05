@@ -29,9 +29,9 @@ class BaseHandler(cyclone.web.RequestHandler):
     def __init__(self, *argc, **argkw):
         super(BaseHandler, self).__init__(*argc, **argkw)
         self.gdata = self.application.gdata
-
+        
     def check_xsrf_cookie(self):
-        if self.settings.config.system.get('production',False):
+        if self.gdata.config.system.get('production',False):
             return super(BaseHandler, self).check_xsrf_cookie()
 
     def initialize(self):

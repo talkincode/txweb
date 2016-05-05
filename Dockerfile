@@ -17,7 +17,6 @@ RUN pip install Beaker
 RUN pip install MarkupSafe
 RUN pip install PyYAML
 RUN pip install Twisted
-RUN pip install tablib
 RUN pip install cyclone
 RUN pip install six
 RUN pip install pycrypto
@@ -28,11 +27,6 @@ RUN pip install redis
 RUN pip install -U --no-deps https://github.com/talkincode/txweb/archive/master.zip
 
 
-ADD entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 
 

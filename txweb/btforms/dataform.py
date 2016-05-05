@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 #coding=utf-8
 import copy
-from toughlib.btforms import  attrget
-from toughlib.btforms import storage
-from toughlib.btforms import AttributeList
+from txweb.btforms import  attrget
+from txweb.btforms import storage
+from txweb.btforms import AttributeList
 
 class Form(object):
 
