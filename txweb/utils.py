@@ -39,7 +39,7 @@ class RSACipher:
     def encrypt(self, pubkey, raw):
         pub_key = RSA.importKey(pubkey)
         raw = safestr(raw)
-        xarr = pub_key.encrypt(text,'')
+        xarr = pub_key.encrypt(raw,'')
         return base64.b64encode(xarr[0])
 
     def decrypt(self, prikey, enc):   
