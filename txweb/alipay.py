@@ -36,7 +36,7 @@ class AliPay:
     def event_alipay_setup(self,settings):
         self.settings = settings
 
-    def safestr(self, s, errors='strict'，encoding='utf-8', strings_only=False):
+    def safestr(self, s, errors='strict',encoding='utf-8', strings_only=False):
         if strings_only and isinstance(s, (types.NoneType, int)):
             return s
         if not isinstance(s, basestring):
