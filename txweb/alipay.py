@@ -36,33 +36,31 @@ class AliPay:
     def event_alipay_setup(self,settings):
         self.settings = settings
 
-    def safestr(self, s, errors='strict',encoding='utf-8', strings_only=False):
-        if strings_only and isinstance(s, (types.NoneType, int)):
-            return s
-        if not isinstance(s, basestring):
-            try:
-                return str(s)
-            except UnicodeEncodeError:
-                if isinstance(s, Exception):
-                    # An Exception subclass containing non-ASCII data that doesn't
-                    # know how to print itself properly. We shouldn't raise a
-                    # further exception.
-                    return ' '.join([smart_str(arg, encoding, strings_only,
-                            errors) for arg in s])
-                return unicode(s).encode(encoding, errors)
-        elif isinstance(s, unicode):
-            return s.encode(encoding, errors)
-        elif s and encoding != 'utf-8':
-            return s.decode('utf-8', errors).encode(encoding, errors)
+    def safestr(self, val, errors='strict'):
+        encoding = self.settings.get('ALIPAY_INPUT_CHARSET','utf-8')
+        if val is None:
+            return ''
+        if isinstance(val, unicode):
+            return val.encode('utf-8',errors)
+        elif isinstance(val, str):
+            return val.decode('utf-8', errors).encode(encoding, errors)
+        elif isinstance(val, (int,float)):
+            return str(val)
+        elif isinstance(val, Exception):
+            return ' '.join([self.safestr(arg, encoding,errors) for arg in val])
         else:
-            return s
+            try:
+                return str(val)
+            except:
+                return unicode(val).encode(encoding, errors)
+        return val
 
     def make_sign(self, **msg):
         ks = msg.keys()
         ks.sort()
         sign_str = '&'.join([ '%s=%s'%(k,msg[k]) for k in ks ])
         if 'MD5' == self.settings.ALIPAY_SIGN_TYPE:
-            return md5(sign_str + self.settings.ALIPAY_KEY).hexdigest()
+            return md5(sign_str + self.safestr(self.settings.ALIPAY_KEY)).hexdigest()
 
         raise Exception('not support sign type %s' % settings.ALIPAY_SIGN_TYPE)
 
