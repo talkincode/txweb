@@ -8,43 +8,13 @@ from txweb.dbutils import DBBackup
 from txweb import redis_session as session
 from txweb import logger,dispatch,utils
 from txweb.permit import permit, load_handlers, load_events
+from txweb.redis_conf import redis_conf
+from txweb import utils
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 
-def redis_conf(config):
-    eredis_url = os.environ.get("REDIS_URL")
-    eredis_port = os.environ.get("REDIS_PORT")
-    eredis_pwd = os.environ.get("REDIS_PWD")
-    eredis_db = os.environ.get("REDIS_DB")
-
-    is_update = any([eredis_url,eredis_port,eredis_pwd,eredis_db])
-
-    if eredis_url:
-        config['redis']['host'] = eredis_url
-    if eredis_port:
-        config['redis']['port'] = int(eredis_port)
-    if eredis_pwd:
-        config['redis']['passwd'] = eredis_pwd 
-    if eredis_db:
-        config['redis']['db'] = int(eredis_db)
-    if is_update:
-        config.save()
-
-    return config['redis']
-
-def update_timezone(config):
-    if 'TZ' not in os.environ:
-        os.environ["TZ"] = config.system.tz
-    try:time.tzset()
-    except:pass
-
 def init(gdata):
-    appname = os.path.basename(gdata.app_dir)
-    update_timezone(gdata.config)
-    syslog = logger.Logger(gdata.config,appname)
-    dispatch.register(syslog)
-    log.startLoggingWithObserver(syslog.emit, setStdout=0)
-
+    """    
     # gdata.db_engine = get_engine(gdata.config)
     # gdata.db = scoped_session(sessionmaker(bind=gdata.db_engine, autocommit=False, autoflush=False))
 
@@ -57,15 +27,22 @@ def init(gdata):
     #     xheaders=True,
     # )
 
-    gdata.redisconf = redis_conf(gdata.config)
-    gdata.session_manager = session.SessionManager(gdata.redisconf,gdata.settings["cookie_secret"], 600)
-    gdata.cache = CacheManager(gdata.redisconf,cache_name='Cache-%s'%os.getpid())
-    gdata.cache.print_hit_stat(60)
+    # gdata.redisconf = redis_conf(gdata.config)
+    # gdata.session_manager = session.SessionManager(gdata.redisconf,gdata.settings["cookie_secret"], 600)
+    # gdata.cache = CacheManager(gdata.redisconf,cache_name='Cache-%s'%os.getpid())
+    # gdata.cache.print_hit_stat(60)
     # gdata.db_backup = DBBackup(models.get_metadata(gdata.db_engine), excludes=[])
-    gdata.aes = utils.AESCipher(key=gdata.config.system.secret)
+    # gdata.aes = utils.AESCipher(key=gdata.config.system.secret)
 
     # cache event init
-    dispatch.register(gdata.cache)
+    # dispatch.register(gdata.cache)
+    """
+
+    appname = os.path.basename(gdata.app_dir)
+    utils.update_timezone(gdata.config.system.tz)
+    syslog = logger.Logger(gdata.config,appname)
+    dispatch.register(syslog)
+    log.startLoggingWithObserver(syslog.emit, setStdout=0)
 
     # app handles init 
     handler_dir = os.path.join(gdata.app_dir,'handlers')
@@ -74,8 +51,7 @@ def init(gdata):
 
     # app event init
     event_dir = os.path.abspath(os.path.join(gdata.app_dir,'events'))
-    if os.path.exists(event_dir):
-        load_events(event_dir,"%s.events"%appname,gdata=gdata)
+    load_events(event_dir,"%s.events"%appname,gdata=gdata)
 
 
 

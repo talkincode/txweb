@@ -5,17 +5,14 @@ import re
 import urlparse
 import urllib
 import traceback
-import cyclone.auth
-import cyclone.escape
 import cyclone.web
 import tempfile
-import traceback
 import functools
 import urlparse
 from urllib import urlencode
 from txweb.paginator import Paginator
-
-
+from txweb.apiutils import apistatus
+from txweb import apiutils
 
 class Application(cyclone.web.Application):
 
@@ -89,6 +86,68 @@ class BaseHandler(cyclone.web.RequestHandler):
                 else:
                     setattr(obj, k, v)
         return obj
+
+
+class ApiHandler(BaseHandler):
+
+    
+    def __init__(self, *argc, **argkw):
+        super(ApiHandler, self).__init__(*argc, **argkw)
+
+    def render_json(self, **template_vars):
+        if not template_vars.has_key("code"):
+            template_vars["code"] = 0
+        resp = json.dumps(template_vars, ensure_ascii=False)
+        self.write(resp)
+
+    def parse_form_request(self):
+        try:
+            sid = self.get_argument("sid")
+            return apiutils.parse_form_request(self.get_secret(sid), self.get_params())
+        except Exception as err:
+            logger.error(u"api authorize parse error, %s" % utils.safeunicode(traceback.format_exc()))
+            raise ValueError(u"Error: %s" % utils.safeunicode(err.message))
+
+
+    def _decode_msg(self,err, msg):
+        _msg = msg and utils.safeunicode(msg) or ''
+        if issubclass(type(err),BaseException):
+            return u'{0}, {1}'.format(utils.safeunicode(_msg),utils.safeunicode(err.message))
+        else:
+            return _msg
+
+    def render_success(self, msg=None, **result):
+        self.render_json(code=apistatus.success.code,
+            msg=self._decode_msg(None,msg or apistatus.success.msg),**result)
+
+    def render_sign_err(self, err=None, msg=None):
+        self.render_json(code=apistatus.sign_err.code,
+            msg=self._decode_msg(err,msg or apistatus.sign_err.msg))
+ 
+    def render_parse_err(self, err=None, msg=None):
+        self.render_json(code=apistatus.sign_err.code, 
+            msg=self._decode_msg(err,msg or apistatus.sign_err.msg))
+ 
+    def render_verify_err(self, err=None,msg=None):
+        self.render_json(code=apistatus.verify_err.code, 
+            msg=self._decode_msg(err,msg or apistatus.verify_err.msg))
+ 
+    def render_server_err(self,err=None, msg=None):
+        self.render_json(code=apistatus.server_err.code, 
+            msg=self._decode_msg(err,msg or apistatus.server_err.msg))
+
+    def render_timeout(self,err=None, msg=None):
+        self.render_json(code=apistatus.timeout.code, 
+            msg=self._decode_msg(err,msg or apistatus.timeout))
+
+    def render_limit_err(self,err=None, msg=None):
+        self.render_json(code=apistatus.limit_err.code, 
+            msg=self._decode_msg(err,msg or apistatus.limit_err)) 
+
+    def render_unknow(self,err=None, msg=None):
+        self.render_json(code=apistatus.unknow.code, 
+            msg=self._decode_msg(err,msg or apistatus.unknow))
+
 
 
 def authenticated(method):

@@ -153,6 +153,8 @@ permit = Permit()
 
 
 def load_handlers(handler_path=None, pkg_prefix=None, excludes=[]):
+    if not os.path.exists(handler_path):
+        return
     _excludes = ['__init__', 'base', '.svn', '.DS_Store', 'views'] + excludes
     hds = set(os.path.splitext(it)[0] for it in os.listdir(handler_path))
     hds = [it for it in hds if it not in _excludes]
@@ -178,6 +180,8 @@ def load_handlers(handler_path=None, pkg_prefix=None, excludes=[]):
 
 
 def load_events(event_path=None,pkg_prefix=None,excludes=[],gdata={}):
+    if not os.path.exists(event_path):
+        return
     _excludes = ['__init__','settings'] + excludes
     evs = set(os.path.splitext(it)[0] for it in os.listdir(event_path))
     evs = [it for it in evs if it not in _excludes]
