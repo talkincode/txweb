@@ -20,9 +20,22 @@ define("port", 0, type=int)
 define("dir", '.')
 define("conf", 'txweb.json')
 define('debug', type=bool, default=True)
+define("create", type=bool, default=False)
+
+def create():
+    if os.path.exists(options.dir):
+        print 'app dir %s is exists' % options.dir
+        return 
+    import shutil
+    tpldir =  os.path.join(os.path.dirname(__file__), "apptpl")
+    dist = os.path.join(os.path.abspath(options.dir) , "webapp")
+    shutil.copytree(tpldir, options.dir)
+    print 'create app done'
 
 def main():
     parse_command_line()
+    if options.create:
+        return create()
     gdata = Storage()
     gdata.port = options.port
     gdata.debug = options.debug
