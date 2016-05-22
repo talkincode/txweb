@@ -27,9 +27,10 @@ def create():
         print 'app dir %s is exists' % options.dir
         return 
     import shutil
+    appdir = os.path.abspath(options.dir) 
     tpldir =  os.path.join(os.path.dirname(__file__), "apptpl")
-    dist = os.path.join(os.path.abspath(options.dir) , "webapp")
-    shutil.copytree(tpldir, options.dir)
+    shutil.copytree(tpldir, appdir)
+    shutil.move(os.path.join(appdir,'webapp'), os.path.join(appdir,os.path.basename(appdir)))
     print 'create app done'
 
 def main():
