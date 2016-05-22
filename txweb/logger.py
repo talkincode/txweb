@@ -17,6 +17,8 @@ EVENT_EXCEPTION = 'syslog_exception'
 EVENT_SETUP = 'syslog_setup'
 
 
+
+
 default_log = logging.getLogger('txweb')
 default_log.setLevel(logging.DEBUG)
 
@@ -113,7 +115,7 @@ class Logger:
             self.syslogger.addHandler(handler)
         else:
             handler = logging.StreamHandler(sys.stderr)
-            formatter = logging.Formatter(u'%(asctime)s %(message)s','%b %d %H:%M:%S',)
+            formatter = logging.Formatter(u'\x1b[32;40m[%(asctime)s %(name)s]\x1b[0m %(message)s','%b %d %H:%M:%S',)
             handler.setFormatter(formatter)
             self.syslogger.addHandler(handler)
 
@@ -174,6 +176,7 @@ def debug(message,**kwargs):
 
 
 def error(message,**kwargs):
+    message = "%s[31;2m%s%s[0m"%(chr(27),message, chr(27))
     if not isinstance(message, unicode):
         message = safeunicode(message)
     if EVENT_ERROR in dispatch.dispatch.callbacks:

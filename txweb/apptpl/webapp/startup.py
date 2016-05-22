@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #coding:utf-8
-import os
+import os,sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__),os.path.pardir))
 from txweb.dbutils import get_engine
 from txweb.redis_cache import CacheManager
 from txweb.dbutils import DBBackup
@@ -38,8 +39,9 @@ def update_timezone(config):
     except:pass
 
 def init(gdata):
+    appname = os.path.basename(gdata.app_dir)
     update_timezone(gdata.config)
-    syslog = logger.Logger(gdata.config,'txweb')
+    syslog = logger.Logger(gdata.config,appname)
     dispatch.register(syslog)
     log.startLoggingWithObserver(syslog.emit, setStdout=0)
 
@@ -66,14 +68,14 @@ def init(gdata):
     dispatch.register(gdata.cache)
 
     # app handles init 
-    handler_dir = os.path.join(gdata.app_dir,'webapp/handlers')
-    load_handlers(handler_path=handler_dir,pkg_prefix="demo.webapp.handlers", excludes=[])
+    handler_dir = os.path.join(gdata.app_dir,'handlers')
+    load_handlers(handler_path=handler_dir,pkg_prefix="%s.handlers"%appname, excludes=[])
     gdata.all_handlers = permit.all_handlers
 
     # app event init
-    event_dir = os.path.abspath(os.path.join(gdata.app_dir,'webapp/events'))
+    event_dir = os.path.abspath(os.path.join(gdata.app_dir,'events'))
     if os.path.exists(event_dir):
-        load_events(event_dir,"demo.webapp.events",gdata=gdata)
+        load_events(event_dir,"%s.events"%appname,gdata=gdata)
 
 
 
