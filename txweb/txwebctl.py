@@ -16,7 +16,7 @@ import signal
 simple :  txwebctl --dir=simple
 '''
 
-define("port", 8000, type=int)
+define("port", 0, type=int)
 define("dir", '.')
 define("conf", 'txweb.json')
 define('debug', type=bool, default=True)
@@ -44,7 +44,7 @@ def main():
     startup.init(gdata)
 
     app = web.Application(gdata)
-    reactor.listenTCP(int(gdata.config.web.port), app, interface=gdata.config.web.host)
+    reactor.listenTCP(gdata.port or int(gdata.config.web.port), app, interface=gdata.config.web.host)
     def exit_handler(signum, stackframe): 
         reactor.callFromThread(reactor.stop)
     signal.signal(signal.SIGTERM, exit_handler)

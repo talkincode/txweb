@@ -100,12 +100,13 @@ class CacheManager(object):
                 return result
             else:
                 self.miss_total += 1
-                logger.debug('miss key %s' % key)
-        elif fetchfunc:
-            expire = kwargs.pop('expire',3600)
-            result = fetchfunc(*args,**kwargs)
+                self.log.debug('miss key %s' % key)
+        
+        expire = kwargs.pop('expire',3600)
+        result = fetchfunc(*args,**kwargs)
+        if result:
             self.set(key,result,expire=expire)
-            return result
+        return result
 
     def exists(self, key):
         return self.redis.exists(key)

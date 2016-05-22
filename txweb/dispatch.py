@@ -36,8 +36,12 @@ class EventDispatcher:
                 deferd.addCallbacks(lambda r:r,lambda e:e)
                 results.append(deferd)
             else:
-                func(*args, **kwargs)
-        return defer.DeferredList(results)
+                result = func(*args, **kwargs)
+                results.append(result)
+        if async:
+            return defer.DeferredList(results)
+        else:
+            return results
 
 
 dispatch = EventDispatcher()
