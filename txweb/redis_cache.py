@@ -23,7 +23,7 @@ class CacheManager(object):
         self.stattimes = stattimes
         self.cache_config = cache_config
         self.redis = redis.StrictRedis(host=cache_config.get('host'), 
-            port=cache_config.get("port"), password=cache_config.get('passwd'),db=0)
+            port=cache_config.get("port"), password=cache_config.get('passwd'),db=cache_config.get('db',0))
         self.get_total = 0
         self.set_total = 0
         self.hit_total = 0
