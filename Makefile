@@ -5,7 +5,7 @@ register:
 	python setup.py register
 
 upload:
-	python setup.py bdist_wheel upload
+	python setup.py bdist bdist_wheel upload
 
 install:
 	python setup.py install
