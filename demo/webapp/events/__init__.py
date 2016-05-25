@@ -1,3 +1,0 @@
-
-def instance(gdata):
-    pass
