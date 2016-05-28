@@ -10,17 +10,12 @@ from txweb.utils import safeunicode
 from twisted.python import log as txlog
 import functools
 
+EVENT_TRACE = 'syslog_trace'
 EVENT_INFO = 'syslog_info'
 EVENT_DEBUG = 'syslog_debug'
 EVENT_ERROR = 'syslog_error'
 EVENT_EXCEPTION = 'syslog_exception'
 EVENT_SETUP = 'syslog_setup'
-
-
-
-
-default_log = logging.getLogger('txweb')
-default_log.setLevel(logging.DEBUG)
 
 
 def string_to_level(log_level):
@@ -38,7 +33,7 @@ def string_to_level(log_level):
 
 class SimpleLogger:
 
-    def __init__(self,config, name="txweb"):
+    def __init__(self,config, name="toughstruct"):
         self.name = name
         self.setup(config)
 
@@ -51,7 +46,7 @@ class SimpleLogger:
         self.log.setLevel(self.level)
 
         handler = logging.StreamHandler(sys.stdout)
-        formatter = logging.Formatter(u'%(asctime)s %(message)s','%b %d %H:%M:%S',)
+        formatter = logging.Formatter(u'%(message)s')
         handler.setFormatter(formatter)
         self.log.addHandler(handler)
 
@@ -90,7 +85,7 @@ class SimpleLogger:
 
 class Logger:
 
-    def __init__(self,config, name="txweb"):
+    def __init__(self,config, name="toughstruct"):
         self.name = name
         self.setup(config)
 
@@ -131,24 +126,29 @@ class Logger:
     def event_syslog_setup(self,config):
         self.setup(config)
 
-    def event_syslog_info(self, msg):
+    def event_syslog_info(self, msg, **kwargs):
         self.info(msg)
 
-    def event_syslog_debug(self, msg):
+    def event_syslog_debug(self, msg, **kwargs):
         self.debug(msg)
 
-    def event_syslog_error(self, msg):
+    def event_syslog_error(self, msg, **kwargs):
         self.error(msg)
 
-    def event_syslog_exception(self, err):
+    def event_syslog_exception(self, err, **kwargs):
         self.syslogger.exception(err)
 
     def emit(self, eventDict):
         text = txlog.textFromEventDict(eventDict)
         if text is None:
             return
+        if not isinstance(text, (unicode,str,dict,list)):
+            text = text
+        else:
+            text = safeunicode(text)
+
         if eventDict['isError'] and 'failure' in eventDict:
-            self.error(text)
+            self.exception(text)
         else:
             self.info(text)
 
@@ -156,14 +156,13 @@ class Logger:
 setup = functools.partial(dispatch.pub, EVENT_SETUP) 
 
 
-
-def info(message,**kwargs):
+def info(message,trace="info",**kwargs):
     if not isinstance(message, unicode):
         message = safeunicode(message)
     if EVENT_INFO in dispatch.dispatch.callbacks:
         dispatch.pub(EVENT_INFO,message,**kwargs)
-    else:
-        default_log.info(message)
+        if EVENT_TRACE in dispatch.dispatch.callbacks:
+            dispatch.pub(EVENT_TRACE,trace,message,**kwargs)
 
 
 def debug(message,**kwargs):
@@ -171,19 +170,24 @@ def debug(message,**kwargs):
         message = safeunicode(message)
     if EVENT_DEBUG in dispatch.dispatch.callbacks:
         dispatch.pub(EVENT_DEBUG,message,**kwargs)
-    else:
-        default_log.debug(message)
-
+        if EVENT_TRACE in dispatch.dispatch.callbacks:
+            dispatch.pub(EVENT_TRACE,"debug",message,**kwargs)
 
 def error(message,**kwargs):
-    message = "%s[31;2m%s%s[0m"%(chr(27),message, chr(27))
     if not isinstance(message, unicode):
         message = safeunicode(message)
     if EVENT_ERROR in dispatch.dispatch.callbacks:
         dispatch.pub(EVENT_ERROR,message,**kwargs)
-    else:
-        default_log.error(message)
+        if EVENT_TRACE in dispatch.dispatch.callbacks:
+            dispatch.pub(EVENT_TRACE,"error",message,**kwargs)
 
 
-exception = functools.partial(dispatch.pub, EVENT_EXCEPTION)
+
+def exception(err,**kwargs):
+    if EVENT_EXCEPTION in dispatch.dispatch.callbacks:
+        dispatch.pub(EVENT_EXCEPTION,err,**kwargs)
+        if EVENT_TRACE in dispatch.dispatch.callbacks:
+            dispatch.pub(EVENT_TRACE,"exception",repr(err),**kwargs)
+
+
 
