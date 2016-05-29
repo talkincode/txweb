@@ -15,11 +15,14 @@ class EventDispatcher:
         self.callbacks = {}
 
 
-    def sub(self, name, func):
-        self.callbacks.setdefault(name, []).append(func)
+    def sub(self, name, func,multi=True):
+        if not multi:
+            self.callbacks[name] = [func]
+        else:
+            self.callbacks.setdefault(name, []).append(func)
         log.msg('register event %s %s' % (name,(func.__doc__ or '')))
 
-    def register(self, obj):
+    def register(self, obj, multi=True):
         d = {}
         reflect.accumulateMethods(obj, d, self.prefix)
         for k,v in d.items():
