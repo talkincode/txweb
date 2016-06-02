@@ -98,6 +98,10 @@ class Form(object):
         o = copy.deepcopy(self)
         if x: o.validates(x)
         return o
+
+    @property
+    def errors(self):
+        return ",".join([u"%s error,%s" % (i.description, i.note) for i in self.inputs if i.note])
     
     def render(self):
         out = ''
