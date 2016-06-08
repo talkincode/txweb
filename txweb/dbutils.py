@@ -113,7 +113,7 @@ class DBBackup:
                         else:
                             cache_datas[tabname].append(rdata)
 
-                        if tabname in cache_datas and len(cache_datas[tabname]) >= 500:
+                        if tabname in cache_datas and len(cache_datas[tabname]) >= 100:
                             print 'insert datas<%s> into %s' % (len(cache_datas[tabname]), tabname)
                             db.execute(self.metadata.tables[tabname].insert().values(cache_datas[tabname]))
                             del cache_datas[tabname]
