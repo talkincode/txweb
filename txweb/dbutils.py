@@ -91,7 +91,7 @@ class DBBackup:
 
 
 
-    def restoredb(self,restorefs):
+    def restoredb(self,restorefs,batch_num=49):
         if not os.path.exists(restorefs):
             print 'backup file not exists'
             return
@@ -113,7 +113,7 @@ class DBBackup:
                         else:
                             cache_datas[tabname].append(rdata)
 
-                        if tabname in cache_datas and len(cache_datas[tabname]) >= 100:
+                        if tabname in cache_datas and len(cache_datas[tabname]) >= batch_num:
                             print 'insert datas<%s> into %s' % (len(cache_datas[tabname]), tabname)
                             db.execute(self.metadata.tables[tabname].insert().values(cache_datas[tabname]))
                             del cache_datas[tabname]
