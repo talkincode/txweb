@@ -2,12 +2,14 @@
 from txweb import choosereactor
 choosereactor.install_optimal_reactor(False)
 from txweb import web
+from txweb import logger
 from txweb import permit
 from txweb.storage import Storage
 from txweb.config import find_config
 from txweb.permit import load_handlers
 from cyclone.options import options,define,parse_command_line
 from twisted.internet import reactor
+from twisted.internet import defer
 import sys,os
 import importlib
 import signal
@@ -84,7 +86,9 @@ def main():
     gdata.config = find_config(gdata.config_file)
 
     startup = importlib.import_module('startup')
-    startup.init(gdata)
+    initd = startup.init(gdata)
+    if isinstance(initd, defer.Deffered):
+        initd.addErrback(lambda e:logger.exception(e))
 
     app = web.Application(gdata)
     reactor.listenTCP(gdata.port or int(gdata.config.web.port), app, interface=gdata.config.web.host)
