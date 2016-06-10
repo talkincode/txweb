@@ -87,7 +87,7 @@ def main():
 
     startup = importlib.import_module('startup')
     initd = startup.init(gdata)
-    if isinstance(initd, defer.Deffered):
+    if isinstance(initd, defer.Deferred):
         initd.addErrback(lambda e:logger.exception(e))
 
     app = web.Application(gdata)
