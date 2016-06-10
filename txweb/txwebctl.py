@@ -92,8 +92,12 @@ def main():
         app = web.Application(gdata)
         reactor.listenTCP(gdata.port or int(gdata.config.web.port), app, interface=gdata.config.web.host)
 
+    def initerr():
+        logger.exception(e)
+        reactor.stop()
+
     if isinstance(initd, defer.Deferred):
-        initd.addCallbacks(initapp,lambda e:logger.exception(e);reactor.stop())
+        initd.addCallbacks(initapp,initerr)
     else:
         initapp()
 
