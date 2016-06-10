@@ -88,18 +88,18 @@ def main():
     startup = importlib.import_module('startup')
     initd = startup.init(gdata)
 
-    def initapp():
+    def initapp(r):
         app = web.Application(gdata)
         reactor.listenTCP(gdata.port or int(gdata.config.web.port), app, interface=gdata.config.web.host)
 
-    def initerr():
-        logger.exception(e)
+    def initerr(err):
+        logger.exception(err)
         reactor.stop()
 
     if isinstance(initd, defer.Deferred):
         initd.addCallbacks(initapp,initerr)
     else:
-        initapp()
+        initapp(gdata)
 
 
     def exit_handler(signum, stackframe): 
