@@ -5,8 +5,9 @@ VOLUME [ "/var/txweb" ]
 
 RUN yum update -y
 RUN yum install -y epel-release
-RUN yum install -y libffi-devel openssl openssl-devel \
-        git gcc crontabs python-devel python-setuptools \
+RUN yum install -y libffi-devel openssl openssl-devel &&\
+        git gcc crontabs python-devel python-setuptools &&\
+        libjpeg-devel libpng-devel czmq czmq-devel &&\
         supervisor mysql-devel MySQL-python && \
         test -f /usr/local/bin/supervisord || ln -s `which supervisord` /usr/local/bin/supervisord && \
         test -f /usr/local/bin/supervisorctl || ln -s `which supervisorctl` /usr/local/bin/supervisorctl 
@@ -25,7 +26,9 @@ RUN pip install pyOpenSSL>=0.14
 RUN pip install service_identity
 RUN pip install SQLAlchemy
 RUN pip install redis
+RUN pip install txzmq
 RUN pip install pybeanstalk
+RUN pip install requests
 RUN pip install Pillow
 RUN pip install qrcode
 RUN pip install dict2xml
