@@ -11,17 +11,13 @@ from txweb import logger
 
 class BeansMq(object):
 
-    def __init__(self,cli,tubes=[]):
+    def __init__(self,cli):
         self.cli = cli
-        self.tubes = tubes
         self.lock = defer.DeferredLock()
 
     def put(self,jobdata,tube=None,**kwargs):
         if not tube:
             return self.cli.put(jobdata,**kwargs)
-
-        if tube not in self.tubes:
-            raise ValueError("tube not exists") 
 
         def _put(lock):
             try:
@@ -34,9 +30,6 @@ class BeansMq(object):
     def reserve(self,tube=None,timeout=None):
         if not tube:
             return self.cli.reserve() if not timeout else self.cli.reserve_with_timeout(timeout)
-
-        if tube not in self.tubes:
-            raise ValueError("tube not exists") 
 
         def _reserve(lock):
             try:
