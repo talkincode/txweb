@@ -11,36 +11,34 @@ from txweb import logger
 
 class BeansMq(object):
 
-    def __init__(self,cli,tube=None):
-        self.cli = cli
-        if tube:
-            self.cli.watch(tube)
+    @defer.inlineCallbacks
+    def __init__(self,host,port,tubes=[]):
+        self.pools = {}
+        for tube in tubes:
+            client = yield protocol.ClientCreator(reactor,Beanstalk).connectTCP(host,port)
+            client.watch(tube)
+            self.pools[tube] = client
 
-    def put(self,jobdata,**kwargs):
-        return self.cli.put(jobdata,**kwargs)
+    def put(self,tube, jobdata,**kwargs):
+        if tube in self.pools:
+            return self.pools[tube].put(jobdata,**kwargs)
 
-    def reserve(self,timeout=None):
-        return self.cli.reserve() if not timeout else self.cli.reserve_with_timeout(timeout)
+    def reserve(self,tube,timeout=None):
+        if tube in self.pools:
+            client = self.pools[tube]
+            return client.reserve() if not timeout else client.reserve_with_timeout(timeout)
 
-    def delete(self,jobid):
-        return self.cli.delete(jobid)
+    def delete(self,tube,jobid):
+        if tube in self.pools:
+            return self.pools[tube].delete(jobid)
 
-    def release(self,jobid,**kwargs):
-        return self.cli.release(jobid,**kwargs)
+    def release(self,tube,jobid,**kwargs):
+        if tube in self.pools:
+            return self.pools[tube].release(jobid,**kwargs)
 
-    def bury(self,jobid,**kwargs):
-        return self.cli.bury(jobid,**kwargs)
-
-    def watch(self,tube):
-        return self.cli.watch(tube)
-
-    def ignore(self,tube):
-        return self.cli.ignore(tube)
+    def bury(self,tube,jobid,**kwargs):
+        if tube in self.pools:
+            return self.pools[tube].bury(jobid,**kwargs)
 
 
-@defer.inlineCallbacks
-def setup(host,port,tube=None):
-    client = yield protocol.ClientCreator(reactor,Beanstalk).connectTCP(host,port)
-    logger.info("beanstalkd connected")
-    defer.returnValue(BeansMq(client,tube=tube))
 
