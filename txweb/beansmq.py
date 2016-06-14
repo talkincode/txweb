@@ -12,7 +12,7 @@ from txweb import logger
 class BeansMq(object):
 
     @defer.inlineCallbacks
-    def __init__(self,host,port,tubes=[]):
+    def __call__(self,host,port,tubes=[]):
         self.pools = {}
         for tube in tubes:
             client = yield protocol.ClientCreator(reactor,Beanstalk).connectTCP(host,port)
@@ -42,4 +42,4 @@ class BeansMq(object):
             return self.pools[tube].bury(jobid,**kwargs)
 
 
-
+BMQ = BeansMq()
