@@ -16,18 +16,19 @@ class BeansMq(object):
         self.pools = {}
         for tube in tubes:
             client = yield protocol.ClientCreator(reactor,Beanstalk).connectTCP(host,port)
-            client.ignore('defaults')
-            client.watch(tube)
             self.pools[tube] = client
         defer.returnValue(self)
 
     def put(self,tube, jobdata,**kwargs):
         if tube in self.pools:
+            self.pools[tube].use(tube)
             return self.pools[tube].put(jobdata,**kwargs)
 
     def reserve(self,tube,timeout=None):
         if tube in self.pools:
             client = self.pools[tube]
+            client.watch(tube)
+            client.ignore('default')
             return client.reserve() if not timeout else client.reserve_with_timeout(timeout)
 
     def delete(self,tube,jobid):
