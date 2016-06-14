@@ -111,6 +111,12 @@ class CacheManager(object):
     def exists(self, key):
         return self.redis.exists(key)
 
+    def incr(self, key):
+        return self.redis.incr(key)
+
+    def decr(self, key):
+        return self.redis.decr(key)
+
     def get(self, key):
         self.get_total += 1
         try:
