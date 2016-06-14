@@ -11,33 +11,16 @@ from txweb import logger
 
 class BeansMq(object):
 
-    def __init__(self,cli):
+    def __init__(self,cli,tube=None):
         self.cli = cli
-        self.lock = defer.DeferredLock()
+        if tube:
+            self.cli.watch(tube)
 
-    def put(self,jobdata,tube=None,**kwargs):
-        if not tube:
-            return self.cli.put(jobdata,**kwargs)
+    def put(self,jobdata,**kwargs):
+        return self.cli.put(jobdata,**kwargs)
 
-        def _put(lock):
-            try:
-                self.cli.use(tube)
-                return self.cli.put(jobdata,**kwargs)
-            finally:
-                lock.release()
-        return self.lock.acquire().addCallbacks(_put,logger.error) 
-
-    def reserve(self,tube=None,timeout=None):
-        if not tube:
-            return self.cli.reserve() if not timeout else self.cli.reserve_with_timeout(timeout)
-
-        def _reserve(lock):
-            try:
-                self.cli.watch(tube)
-                return self.cli.reserve() if not timeout else self.cli.reserve_with_timeout(timeout)
-            finally:
-                lock.release()
-        return self.lock.acquire().addCallbacks(_reserve,logger.error) 
+    def reserve(self,timeout=None):
+        return self.cli.reserve() if not timeout else self.cli.reserve_with_timeout(timeout)
 
     def delete(self,jobid):
         return self.cli.delete(jobid)
@@ -56,8 +39,8 @@ class BeansMq(object):
 
 
 @defer.inlineCallbacks
-def setup(host,port):
+def setup(host,port,tube=None):
     client = yield protocol.ClientCreator(reactor,Beanstalk).connectTCP(host,port)
     logger.info("beanstalkd connected")
-    defer.returnValue(BeansMq(client))
+    defer.returnValue(BeansMq(client,tube=tube))
 
