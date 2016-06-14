@@ -16,6 +16,7 @@ class BeansMq(object):
         self.pools = {}
         for tube in tubes:
             client = yield protocol.ClientCreator(reactor,Beanstalk).connectTCP(host,port)
+            client.ignore('defaults')
             client.watch(tube)
             self.pools[tube] = client
         defer.returnValue(self)
