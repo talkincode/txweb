@@ -18,6 +18,7 @@ class BeansMq(object):
             client = yield protocol.ClientCreator(reactor,Beanstalk).connectTCP(host,port)
             client.watch(tube)
             self.pools[tube] = client
+        defer.returnValue(self)
 
     def put(self,tube, jobdata,**kwargs):
         if tube in self.pools:
