@@ -18,22 +18,22 @@ class CacheManager(object):
         self.cache_name = cache_name
         self.stattimes = stattimes
         self.cache_config = cache_config
-        try:
-            import cyclone.redis
-            self.redis = cyclone.redis.lazyConnectionPool(
-                host=cache_config.get('host'), 
-                port=cache_config.get("port"),
-                password=cache_config.get('passwd'),
-                dbid=cache_config.get('db',0), 
-                poolsize=poolsize)
-        except Exception as err:
-            logger.exception(err)
-            import redis
-            self.redis = redis.StrictRedis(
-                host=cache_config.get('host'), 
-                port=cache_config.get("port"), 
-                password=cache_config.get('passwd'),
-                db=cache_config.get('db',0))
+        # try:
+        #     import cyclone.redis
+        #     self.redis = cyclone.redis.lazyConnectionPool(
+        #         host=cache_config.get('host'), 
+        #         port=cache_config.get("port"),
+        #         password=cache_config.get('passwd'),
+        #         dbid=cache_config.get('db',0), 
+        #         poolsize=poolsize)
+        # except Exception as err:
+        #     logger.exception(err)
+        import redis
+        self.redis = redis.StrictRedis(
+            host=cache_config.get('host'), 
+            port=cache_config.get("port"), 
+            password=cache_config.get('passwd'),
+            db=cache_config.get('db',0))
         self.get_total = 0
         self.set_total = 0
         self.hit_total = 0
