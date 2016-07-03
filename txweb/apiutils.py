@@ -57,7 +57,7 @@ def check_sign(api_secret, msg):
         logger.error("check_sign failure, sign:%s != local_sign:%s" %(sign,local_sign))
     return result
 
-def make_message(api_secret, enc_func=False, **params):
+def make_message(api_secret, enc_func=False,jsoncls=None, **params):
     """
         >>> json.loads(make_message("123456",**dict(code=1,msg=u"中文",nonce=1451122677)))['sign']
         u'58BAF40309BC1DC51D2E2DC43ECCC1A1'
@@ -65,7 +65,10 @@ def make_message(api_secret, enc_func=False, **params):
     if 'nonce' not in params:
         params['nonce' ] = str(int(time.time()))
     params['sign'] = make_sign(api_secret, params.values())
-    msg = json.dumps(params, ensure_ascii=False)
+    if jsoncls:
+        msg = json.dumps(params, cls=jsoncls, ensure_ascii=False)
+    else:
+        msg = json.dumps(params, ensure_ascii=False)
     if callable(enc_func):
         return enc_func(msg)
     else:
