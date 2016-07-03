@@ -8,9 +8,9 @@ import uuid
 import hashlib
 import base64
 try:
-    import redis
+    import cyclone.redis
 except:
-    pass
+    import redis
 
 class SessionData(dict):
     def __init__(self, session_id, hmac_key):
@@ -43,8 +43,19 @@ class SessionManager(object):
     def __init__(self, cache_config,secret, session_timeout):
         self.secret = secret
         self.session_timeout = session_timeout
-        self.redis = redis.StrictRedis(host=cache_config.get('host'), 
-            port=cache_config.get("port"), password=cache_config.get('passwd'),db=1)
+        try:
+            self.redis = cyclone.redis.lazyConnectionPool(
+                host=cache_config.get('host'), 
+                port=cache_config.get("port"),
+                password=cache_config.get('passwd'),
+                dbid=cache_config.get('db',1), 
+                poolsize=5)
+        except:
+            self.redis = redis.StrictRedis(
+                host=cache_config.get('host'), 
+                port=cache_config.get("port"), 
+                password=cache_config.get('passwd'),
+                db=1)
         
     def encode_data(self,data):
         return base64.b64encode(pickle.dumps(data, pickle.HIGHEST_PROTOCOL))
