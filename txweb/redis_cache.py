@@ -8,10 +8,6 @@ import functools
 import base64
 from twisted.internet import reactor
 from txweb import logger
-try:
-    import cyclone.redis
-except:
-    import redis
 
 CACHE_SET_EVENT = 'cache_set'
 CACHE_DELETE_EVENT = 'cache_delete'
@@ -23,6 +19,7 @@ class CacheManager(object):
         self.stattimes = stattimes
         self.cache_config = cache_config
         try:
+            import cyclone.redis
             self.redis = cyclone.redis.lazyConnectionPool(
                 host=cache_config.get('host'), 
                 port=cache_config.get("port"),
@@ -30,6 +27,7 @@ class CacheManager(object):
                 dbid=cache_config.get('db',0), 
                 poolsize=poolsize)
         except:
+            import redis
             self.redis = redis.StrictRedis(
                 host=cache_config.get('host'), 
                 port=cache_config.get("port"), 

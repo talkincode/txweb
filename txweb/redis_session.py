@@ -7,10 +7,7 @@ import hmac
 import uuid
 import hashlib
 import base64
-try:
-    import cyclone.redis
-except:
-    import redis
+
 
 class SessionData(dict):
     def __init__(self, session_id, hmac_key):
@@ -44,6 +41,7 @@ class SessionManager(object):
         self.secret = secret
         self.session_timeout = session_timeout
         try:
+            import cyclone.redis
             self.redis = cyclone.redis.lazyConnectionPool(
                 host=cache_config.get('host'), 
                 port=cache_config.get("port"),
@@ -51,6 +49,7 @@ class SessionManager(object):
                 dbid=cache_config.get('db',1), 
                 poolsize=5)
         except:
+            import redis
             self.redis = redis.StrictRedis(
                 host=cache_config.get('host'), 
                 port=cache_config.get("port"), 
