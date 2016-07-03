@@ -7,7 +7,7 @@ import hmac
 import uuid
 import hashlib
 import base64
-
+import logger
 
 class SessionData(dict):
     def __init__(self, session_id, hmac_key):
@@ -48,7 +48,8 @@ class SessionManager(object):
                 password=cache_config.get('passwd'),
                 dbid=cache_config.get('db',1), 
                 poolsize=5)
-        except:
+        except Exception as err:
+            logger.exception(err)
             import redis
             self.redis = redis.StrictRedis(
                 host=cache_config.get('host'), 

@@ -26,7 +26,8 @@ class CacheManager(object):
                 password=cache_config.get('passwd'),
                 dbid=cache_config.get('db',0), 
                 poolsize=poolsize)
-        except:
+        except Exception as err:
+            logger.exception(err)
             import redis
             self.redis = redis.StrictRedis(
                 host=cache_config.get('host'), 
