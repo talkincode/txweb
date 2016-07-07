@@ -10,7 +10,6 @@ install_requires = [
     'six>=1.8.0',
     'Twisted>=15.0.0',
     'pyOpenSSL >= 0.13',
-    'SQLAlchemy',
     'cyclone',
     'pycrypto'
 ]
