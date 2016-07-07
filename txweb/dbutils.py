@@ -3,10 +3,12 @@
 import os
 import functools
 import json
-from sqlalchemy import *
 import json
 import gzip
-
+try:
+    from sqlalchemy import *
+except:
+    pass
 
 ISOLATION_LEVEL = {
     1 : 'READ COMMITTED',

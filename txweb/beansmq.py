@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from twisted.internet import reactor, protocol, defer
-from beanstalk.twisted_client import Beanstalk
 from txweb import logger
+try:
+    from beanstalk.twisted_client import Beanstalk
+except:
+    pass
 
 """
 基于beanstalkd 封装的消息客户端。
