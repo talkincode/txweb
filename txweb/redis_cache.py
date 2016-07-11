@@ -127,13 +127,16 @@ class CacheManager(object):
     def decr(self, key):
         return self.redis.decr(key)
 
-    def get(self, key):
+    def get(self, key,is_pickle=True):
         self.get_total += 1
         try:
             raw_data = self.redis.get(key)
-            if raw_data:
+            if raw_data is not None:
                 self.hit_total += 1
-                return self.decode_data(raw_data)
+                if is_pickle:
+                    return self.decode_data(raw_data)
+                else:
+                    return raw_data
             else:
                 self.miss_total += 1
                 logger.debug('miss key %s' % key)
@@ -156,18 +159,22 @@ class CacheManager(object):
         logger.info("event: set cache %s " % key)
         self.set(key, value, expire)
 
-    def set(self, key, value, expire=3600):
+    def set(self, key, value, expire=3600, is_pickle=True):
         self.set_total += 1
-        raw_data = self.encode_data(value)
+        raw_data = value
+        if is_pickle:
+            raw_data = self.encode_data(value)
         self.redis.setex(key,expire,raw_data)
      
     def event_cache_update(self, key, value, expire=3600):
         logger.info("event: update cache %s " % key)
         self.update(key, value, expire)
 
-    def update(self, key, value, expire=3600):
+    def update(self, key, value, expire=3600,is_pickle=True):
         self.update_total += 1
-        raw_data = self.encode_data(value)
+        raw_data = value
+        if is_pickle:
+            raw_data = self.encode_data(value)
         self.redis.setex(key,expire,raw_data)
 
 if __name__ == '__main__':
