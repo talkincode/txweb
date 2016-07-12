@@ -4,8 +4,9 @@ import time
 
 class ValidateCache(object):
 
-    def __init__(self, max_times=5):
+    def __init__(self, max_times=5,delay=3600):
         self.max_times = max_times
+        self.delay = delay
 
     validates = {}
     def incr(self,mid,vid):
@@ -30,7 +31,7 @@ class ValidateCache(object):
         key = "%s_%s"%(mid,vid)
         if key not in self.validates:
             return False
-        elif (time.time() - self.validates[key][1]) > 3600:
+        elif (time.time() - self.validates[key][1]) > self.delay:
             del self.validates[key]
             return False
         else:
