@@ -6,7 +6,6 @@ from txweb import logger
 from txweb import permit
 from txweb.storage import Storage
 from txweb.config import find_config
-from txweb.permit import load_handlers
 from cyclone.options import options,define,parse_command_line
 from twisted.internet import reactor
 from twisted.internet import defer
