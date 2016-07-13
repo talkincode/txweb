@@ -87,6 +87,7 @@ class Form(object):
         self.inputs = inputs
         self.valid = True
         self.note = None
+        self.attrs = kw.pop('attrs',{})
         self.validators = kw.pop('validators', [])
         self.action = kw.pop("action","")
         self.title = kw.pop("title","")
