@@ -27,8 +27,6 @@ define('debug', type=bool, default=True)
 
 def main():
     parse_command_line()
-    if options.create:
-        return create()
     gdata = Storage()
     gdata.port = options.port
     gdata.debug = options.debug
