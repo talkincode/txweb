@@ -41,7 +41,8 @@ setup(name='txweb',
       install_requires=install_requires,
       entry_points={
           'console_scripts': [
-              'txwebctl = txweb.txwebctl:main'
+              'txwebctl = txweb.txwebctl:main',
+              'txappctl = txweb.txappctl:main',
           ]
       }
 )
