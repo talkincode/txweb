@@ -45,7 +45,14 @@ def main():
     gdata.config = find_config(gdata.config_file)
 
     appmdl = importlib.import_module(options.app)
-    appmdl.start(gdata)
+    startd = appmdl.start(gdata)
+
+    def initerr(err):
+        logger.exception(err)
+        reactor.stop()
+
+    if isinstance(startd, defer.Deferred):
+        startd.addCallbacks(logger.info,initerr)
 
     def exit_handler(signum, stackframe): 
         reactor.callFromThread(reactor.stop)
