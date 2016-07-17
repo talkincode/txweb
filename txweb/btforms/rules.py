@@ -20,6 +20,7 @@ is_phone = btforms.regexp('^(\(\d{3,4}\)|\d{3,4}-)?\d{7,8}$', u"固定电话号�
 is_idcard = btforms.regexp('^\d{15}$|^\d{18}$|^\d{17}[Xx]$', u"身份证号码格式")
 is_ip = btforms.regexp("(^$)|\d+\.\d+\.\d+\.\d+", u"ip格式：xxx.xxx.xxx.xxx")
 is_rmb = btforms.regexp('^(([1-9]\d*)|0)(\.\d{1,2})?$', u"人民币金额 xx.xx")
+is_float = btforms.regexp('^(([1-9]\d*)|0)(\.\d{1,9})?$', u"浮点数字 xx.xx")
 len_of = lambda x, y: btforms.regexp("[\s\S]{%s,%s}$" % (x, y), u"长度必须为%s到%s" % (x, y))
 is_alphanum3 = lambda x, y: btforms.regexp("^[A-Za-z0-9\_\-]{%s,%s}$" % (x, y), u"必须是长度为%s到%s的数字字母与下划线组合" % (x, y))
 is_period = btforms.regexp("(^$)|^([01][0-9]|2[0-3]):[0-5][0-9]-([01][0-9]|2[0-3]):[0-5][0-9]$",u"时间段，hh:mm-hh:mm,支持跨天，如 19:00-09:20")
