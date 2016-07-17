@@ -17,7 +17,7 @@ apistatus = Storage(
     timeout = ApiStatus(code=90004,desc='request timeout',msg=u"请求超时"),
     limit_err = ApiStatus(code=90005,desc='api limit',msg=u"频率限制"),
     server_err = ApiStatus(code=90006,desc='server process failure',msg=u"服务器处理失败"),
-    unknow = ApiStatus(code=99999,desc='unknow error',msg=u"未知错误")
+    unknow = ApiStatus(code=99999,desc='error',msg=u"错误")
 )
 
 class SignError(Exception):
