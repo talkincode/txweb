@@ -145,6 +145,16 @@ def mb2kb(im=0):
     _mb = decimal.Decimal(im or 0)
     _kb = _mb * decimal.Decimal(1024)
     return int(_kb.to_integral_value())
+
+def kb2gb(ik,fmt='1.00'):
+    _kb = decimal.Decimal(ik or 0)
+    _mb = _kb / decimal.Decimal(1024*1024)
+    return str(_mb.quantize(decimal.Decimal(fmt)))
+    
+def gb2kb(im=0):
+    _mb = decimal.Decimal(im or 0)
+    _kb = _mb * decimal.Decimal(1024*1024)
+    return int(_kb.to_integral_value())
     
 def hour2sec(hor=0):
     _hor = decimal.Decimal(hor or 0)
