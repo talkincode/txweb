@@ -181,13 +181,10 @@ def error(message,**kwargs):
         if EVENT_TRACE in dispatch.dispatch.callbacks:
             dispatch.pub(EVENT_TRACE,"error",message,**kwargs)
 
-
-
 def exception(err,**kwargs):
     if EVENT_EXCEPTION in dispatch.dispatch.callbacks:
         dispatch.pub(EVENT_EXCEPTION,err,**kwargs)
         if EVENT_TRACE in dispatch.dispatch.callbacks:
             dispatch.pub(EVENT_TRACE,"exception",repr(err),**kwargs)
-
 
 
