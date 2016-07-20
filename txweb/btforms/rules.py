@@ -38,6 +38,6 @@ large_style={"class":" btn btn-lg"}
 
 if __name__ == "__main__":
     is_ip = btforms.regexp("(^$)|\d+\.\d+\.\d+\.\d+", u"ip格式：xxx.xxx.xxx.xxx")
-    print is_ip.valid(None) 
+    print is_number3.valid("0.5") 
     
     

@@ -34,17 +34,16 @@ class EventDispatcher:
         async = kwargs.pop("async",False)
         results = []
         for func in self.callbacks[name]:
-            if async:
+            if async and 'Deferred' not in func.func_code.co_names:
                 deferd = deferToThread(func, *args, **kwargs)
-                deferd.addCallbacks(lambda r:r,lambda e:e)
+                deferd.addErrback(log.err)
                 results.append(deferd)
             else:
                 result = func(*args, **kwargs)
+                if isinstance(result, defer.Deferred):
+                    result.addErrback(log.err)
                 results.append(result)
-        if async:
-            return defer.DeferredList(results)
-        else:
-            return results
+        return results
 
 
 dispatch = EventDispatcher()

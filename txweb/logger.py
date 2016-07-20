@@ -156,13 +156,13 @@ class Logger:
 setup = functools.partial(dispatch.pub, EVENT_SETUP) 
 
 
-def info(message,trace="info",**kwargs):
+def info(message,**kwargs):
     if not isinstance(message, unicode):
         message = safeunicode(message)
     if EVENT_INFO in dispatch.dispatch.callbacks:
         dispatch.pub(EVENT_INFO,message,**kwargs)
         if EVENT_TRACE in dispatch.dispatch.callbacks:
-            dispatch.pub(EVENT_TRACE,trace,message,**kwargs)
+            dispatch.pub(EVENT_TRACE,"info",message,**kwargs)
 
 
 def debug(message,**kwargs):
