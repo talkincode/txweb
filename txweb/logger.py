@@ -139,18 +139,22 @@ class Logger:
         self.syslogger.exception(err)
 
     def emit(self, eventDict):
-        text = txlog.textFromEventDict(eventDict)
-        if text is None:
-            return
-        if not isinstance(text, (unicode,str,dict,list)):
-            text = text
-        else:
-            text = safeunicode(text)
+        try:
+            text = txlog.textFromEventDict(eventDict)
+            if text is None:
+                return
+            if not isinstance(text, (unicode,str,dict,list)):
+                text = text
+            else:
+                text = safeunicode(text)
 
-        if eventDict['isError'] and 'failure' in eventDict:
-            self.exception(text)
-        else:
-            self.info(text)
+            if eventDict['isError'] and 'failure' in eventDict:
+                self.exception(text)
+            else:
+                self.info(text)
+        except:
+            import traceback
+            traceback.print_exc()
 
 
 setup = functools.partial(dispatch.pub, EVENT_SETUP) 
