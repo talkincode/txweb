@@ -149,7 +149,7 @@ class Logger:
                 text = safeunicode(text)
 
             if eventDict['isError'] and 'failure' in eventDict:
-                self.exception(text)
+                self.syslogger.exception(err)
             else:
                 self.info(text)
         except:
