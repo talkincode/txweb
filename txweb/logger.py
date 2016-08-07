@@ -3,6 +3,7 @@
 import sys
 import os
 import socket
+import traceback
 import logging
 import logging.handlers
 from txweb import dispatch
@@ -192,4 +193,8 @@ def exception(err,**kwargs):
         if EVENT_TRACE in dispatch.dispatch.callbacks:
             dispatch.pub(EVENT_TRACE,"exception",repr(err),**kwargs)
 
+def trace_exception(etype, value, tb):
+    errmsg = "".join(traceback.format_exception(etype, value, tb))
+    error(errmsg,trace="exception")
 
+sys.excepthook = trace_exception
