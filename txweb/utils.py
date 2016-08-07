@@ -275,7 +275,7 @@ def serial_model(mdl):
         data[c.name] = getattr(mdl, c.name)
     return json.dumps(data,ensure_ascii=False)
 
-def safestr(val):
+def safestr(val,json_hook=None):
     if val is None:
         return ''
 
@@ -291,7 +291,7 @@ def safestr(val):
     elif isinstance(val, float):
         return str(val)
     elif isinstance(val, (dict,list)):
-        return json.dumps(val, ensure_ascii=False)
+        return json.dumps(val,cls=json_hook,ensure_ascii=False)
     else:
         try:
             return str(val)
@@ -299,7 +299,7 @@ def safestr(val):
             return val
     return val
 
-def safeunicode(val):
+def safeunicode(val,json_hook=None):
     if val is None:
         return u''
 
@@ -318,7 +318,7 @@ def safeunicode(val):
     elif isinstance(val, float):
         return str(val).decode('utf-8')
     elif isinstance(val, (dict,list)):
-        return json.dumps(val)
+        return json.dumps(val,cls=json_hook)
     else:
         try:
             return str(val).decode('utf-8')
