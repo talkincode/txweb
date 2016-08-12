@@ -90,7 +90,17 @@ def main():
 
     def initapp(r):
         app = web.Application(gdata)
-        reactor.listenTCP(gdata.port or int(gdata.config.web.port), app, interface=gdata.config.web.host)
+        if gdata.config.web.get("ssl"):
+            from twisted.internet import ssl
+            sslContext = ssl.DefaultOpenSSLContextFactory(gdata.config.privatekey, gdata.config.certificate)
+            reactor.listenSSL(
+                gdata.port or int(gdata.config.web.port),
+                app,
+                contextFactory=sslContext,
+                interface=gdata.config.web.host
+            )
+        else:
+            reactor.listenTCP(gdata.port or int(gdata.config.web.port), app, interface=gdata.config.web.host)
 
     def initerr(err):
         logger.exception(err)
