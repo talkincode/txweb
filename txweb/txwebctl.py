@@ -92,7 +92,7 @@ def main():
         app = web.Application(gdata)
         if gdata.config.web.get("ssl"):
             from twisted.internet import ssl
-            sslContext = ssl.DefaultOpenSSLContextFactory(gdata.config.privatekey, gdata.config.certificate)
+            sslContext = ssl.DefaultOpenSSLContextFactory(gdata.config.web.privatekey, gdata.config.web.certificate)
             reactor.listenSSL(
                 gdata.port or int(gdata.config.web.port),
                 app,
