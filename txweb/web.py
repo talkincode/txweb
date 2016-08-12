@@ -17,7 +17,7 @@ from txweb import apiutils
 class Application(cyclone.web.Application):
 
     def __init__(self, gdata):
-        super(Application, self).__init__(self, gdata.all_handlers, **gdata.get('settings',{}))
+        super(Application, self).__init__(gdata.all_handlers, **gdata.get('settings',{}))
         self.config = gdata.config
         self.gdata = gdata
 
