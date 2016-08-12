@@ -91,6 +91,8 @@ def main():
     def initapp(r):
         app = web.Application(gdata)
         if gdata.config.web.get("ssl"):
+            logger.info("load ssl key %s"%gdata.config.web.privatekey)
+            logger.info("load ssl crt %s"%gdata.config.web.certificate)
             from twisted.internet import ssl
             sslContext = ssl.DefaultOpenSSLContextFactory(gdata.config.web.privatekey, gdata.config.web.certificate)
             reactor.listenSSL(
