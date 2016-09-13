@@ -44,10 +44,11 @@ def main():
     gdata.config = find_config(gdata.config_file)
 
     appmdl = importlib.import_module(options.app)
+    print "import startup module %s"%appmdl
     startd = appmdl.start(gdata)
 
     def initerr(err):
-        logger.exception(err)
+        print repr(err)
         reactor.stop()
 
     if isinstance(startd, defer.Deferred):
