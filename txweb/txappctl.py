@@ -36,27 +36,31 @@ def main():
 
     sys.path.insert(0, gdata.app_dir)
 
-    if r'/' in options.conf:
-        gdata.config_file = os.path.abspath(options.conf)
-    else:
-        gdata.config_file = os.path.abspath(os.path.join(options.dir,options.conf))
+    try:
+        if r'/' in options.conf:
+            gdata.config_file = os.path.abspath(options.conf)
+        else:
+            gdata.config_file = os.path.abspath(os.path.join(options.dir,options.conf))
 
-    gdata.config = find_config(gdata.config_file)
+        gdata.config = find_config(gdata.config_file)
 
-    appmdl = importlib.import_module(options.app)
-    print "import startup module %s"%appmdl
-    startd = appmdl.start(gdata)
+        appmdl = importlib.import_module(options.app)
+        print "import startup module %s"%appmdl
+        startd = appmdl.start(gdata)
 
-    def initerr(err):
-        print repr(err)
-        reactor.stop()
+        def initerr(err):
+            print repr(err)
+            reactor.stop()
 
-    if isinstance(startd, defer.Deferred):
-        startd.addCallbacks(logger.info,initerr)
+        if isinstance(startd, defer.Deferred):
+            startd.addCallbacks(logger.info,initerr)
 
-    def exit_handler(signum, stackframe): 
-        reactor.callFromThread(reactor.stop)
-    signal.signal(signal.SIGTERM, exit_handler)
-    reactor.run()
+        def exit_handler(signum, stackframe): 
+            reactor.callFromThread(reactor.stop)
+        signal.signal(signal.SIGTERM, exit_handler)
+        reactor.run()
+    except:
+        import traceback
+        traceback.print_exc()
 
 
