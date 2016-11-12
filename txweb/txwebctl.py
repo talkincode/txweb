@@ -21,6 +21,7 @@ simple :  txwebctl --dir=simple
 '''
 
 define("port", 0, type=int, help="application listen http port")
+define("pnum", 0, type=int, help="application proc number")
 define("dir", '.',help="application dir")
 define("conf", 'txweb.json',help="json config file ")
 define('debug', type=bool, default=True)
