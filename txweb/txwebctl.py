@@ -71,6 +71,7 @@ def main():
         return create()
     gdata = Storage()
     gdata.port = options.port
+    gdata.pnum = options.pnum
     gdata.debug = options.debug
     gdata.app_dir = os.path.abspath(options.dir)
     if not os.path.exists(options.dir):
